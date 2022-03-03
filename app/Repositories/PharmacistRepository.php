@@ -14,7 +14,7 @@ class PharmacistRepository implements RepositoryInterfaces\PharmacistRepositoryI
 
     public function getNearbyPharmacists( array $data )
     {
-        $pharmacists = Pharmacist::withinDistanceOf($data['longitude'], $data['latitude'], $data['distance'])->get();
+        $pharmacists =  Pharmacist::orderByDistanceFrom($data['latitude'], $data['longitude'], 'desc')->get();
         return $pharmacists;
     }
 }

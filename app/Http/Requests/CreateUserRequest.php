@@ -30,8 +30,8 @@ class CreateUserRequest extends FormRequest
             'lastname' =>  ['required', 'string', 'max:255'],
             'email' =>  ['required', 'email', 'max:255', 'unique:users,email'],
             'password' =>  ['required', 'string', 'max:255', 'min:6', 'confirmed'],
-            'role_id' => ['string', Rule::in([9, 18, 27, 36, 45, 54, 63, 72, 81])],
-            'application_name' => ['required', 'string'],
+            'role_id' => ['required', 'string', Rule::in([9, 18, 27, 36, 45, 54, 63, 72, 81])],
+            'application_name' => ['required', 'string', Rule::in(['rigourPatient', 'rigourDriver', 'rigourDistributor', 'polaris', 'ecommerce', 'picon'])],
             'date_of_birth' => ['required', 'date'],
         ];
     }

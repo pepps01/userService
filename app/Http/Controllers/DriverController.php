@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateNearMeRequest;
 use App\Models\User;
 use App\Http\Requests\CreateUpdateDriverRequest;
-use App\Http\Resources\DriverResource;
+use App\Http\Resources\NearByDriverResource;
 use App\Http\Resources\UserResource;
 use App\Repositories\RepositoryInterfaces\DriverRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
@@ -50,6 +50,6 @@ class DriverController extends Controller
     {
         $locationData = $request->validated();
         $drivers = $this->driverRepository->getNearByDrivers( $locationData );
-        return ApiResponse::successResponseWithData( DriverResource::collection( $drivers ), 'Drivers retrieved successfully', 200);
+        return ApiResponse::successResponseWithData( NearByDriverResource::collection( $drivers ), 'Drivers retrieved successfully', 200);
     }
 }

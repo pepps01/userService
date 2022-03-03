@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateNearMeRequest;
 use App\Models\User;
 use App\Http\Requests\CreateUpdatePharmacistRequest;
+use App\Http\Resources\NearByPharmacistResource;
 use App\Http\Resources\UserResource;
 use App\Repositories\RepositoryInterfaces\PharmacistRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
@@ -50,7 +51,7 @@ class PharmacistController extends Controller
     {
         $locationData = $request->validated();
         $pharmacists = $this->pharmacistRepository->getNearByPharmacists( $locationData );
-
+        return ApiResponse::successResponseWithData( NearByPharmacistResource::collection( $pharmacists ), 'Pharmacists retrieved successfully', 200);
         return $pharmacists;
     }
 }

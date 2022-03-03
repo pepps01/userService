@@ -63,9 +63,16 @@ class AuthController extends Controller
 
         $accessToken = $createUser->createToken('Auth Token')->accessToken;
 
-        // event(new Registered($createUser));
+        $mobileApps = ['rigourPatient', 'rigourDriver', 'rigourDistributor'];
+        $webApps = ['polaris', 'ecommerce', 'picon'];
 
-        VerificationCode::send($newUser['email']);
+        if ( in_array( $newUser['application_name'], $mobileApps ) ){
+            VerificationCode::send( $newUser['email'] );
+        }
+
+        if ( in_array( $newUser['application_name'], $webApps ) ){
+            event(new Registered( $createUser ));
+        }
 
         $data = new UserResource($createUser);
 

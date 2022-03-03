@@ -15,7 +15,7 @@ class DriverRepository implements RepositoryInterfaces\DriverRepositoryInterface
 
     public function getNearbyDrivers( array $data )
     {
-        $driver = Driver::withinDistanceOf($data['longitude'], $data['latitude'], $data['distance'])->get();
+        $driver = Driver::orderByDistanceFrom($data['latitude'], $data['longitude'], 'desc')->get();
         return $driver;
     }
 
