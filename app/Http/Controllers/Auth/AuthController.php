@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
+use App\Repositories\RepositoryInterfaces\ProfileRepositoryInterface;
+use App\Repositories\RepositoryInterfaces\WalletRepositoryInterface;
+use App\Http\Requests\CreateUserRequest;
+use NextApps\VerificationCode\VerificationCode;
+use App\Http\Resources\UserResource;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use App\Traits\ApiResponse;
+
+class AuthController extends Controller
+{
+
+    private $userRepository;
+    private $profileRepository;
+    private $walletRepository;
+    public function __construct(UserRepositoryInterface $userRepository,
+                                ProfileRepositoryInterface $profileRepository,
+                                WalletRepositoryInterface $walletRepository
+    ){
+        $this->userRepository = $userRepository;
+        $this->profileRepository = $profileRepository;
+        $this->walletRepository = $walletRepository;
+    }
+
+    /**
+     * Login User
+     */
+
+    public function login(Request $request)
+    {
+
+        $userData =  $request->validate([
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string']
+        ]);
+
+        if (Auth::attempt($userData)) {
+            $accessToken = Auth::user()->createToken('Auth Token')->accessToken;
+            $data = new UserResource(auth()->user());
+
+            return ApiResponse::successResponseWithData($data, 'Login successful', 200, $accessToken);
+        }
+
+        return ApiResponse::errorResponse('Invalid Login credentials', 400);
+    }
+
+     /**
+     * Register user
+     */
+
+    public function register(CreateUserRequest $request)
+    {
+        $newUser = $request->validated();
+        $createUser = $this->userRepository->create($newUser);
+        $createUserProfile = $this->profileRepository->create($createUser->id, $createUser->role_id);
+        $createWallet = $this->walletRepository->create($createUser->id);
+
+        $accessToken = $createUser->createToken('Auth Token')->accessToken;
+
+        // event(new Registered($createUser));
+
+        VerificationCode::send($newUser['email']);
+
+        $data = new UserResource($createUser);
+
+        return ApiResponse::successResponseWithData($data, 'Registration successful', 200, $accessToken);
+
+    }
+}
