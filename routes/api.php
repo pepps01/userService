@@ -10,8 +10,6 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PharmacistController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\UserController;
-use App\Http\Resources\UserResource;
-use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,12 +31,6 @@ Route::group(['middleware' => ['json.response']], function () {
 
     Route::get('/login/{provider}', [SocialController::class,'redirectToProvider'])->where('provider', 'google|facebook');
     Route::get('/login/{provider}/callback', [SocialController::class,'handleProviderCallback'])->where('provider', 'google|facebook');;
-
-    Route::get('users', function(){
-        $users = User::whereBetween('id', array(1, 30))->get();
-        return UserResource::collection($users);
-        // return UserResource::collection(User::all());
-    });
 
     // Get users by their profile type
     Route::get('users/{role_id}', [UserController::class, 'getUsersByRole'] )->where('role_id', '9|18|27|36|45|54|63|72|81|90');

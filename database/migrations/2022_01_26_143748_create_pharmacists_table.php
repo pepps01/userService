@@ -19,6 +19,7 @@ class CreatePharmacistsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('phone_number')->nullable()->unique();
             $table->tinyInteger('status')->default(1);
+            $table->string('gender')->nullable();
             $table->string('address')->nullable();
             $table->string('alt_address')->nullable();
             $table->decimal('latitude', 8, 6)->nullable();

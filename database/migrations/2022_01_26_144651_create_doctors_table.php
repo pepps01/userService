@@ -22,8 +22,12 @@ class CreateDoctorsTable extends Migration
             $table->string('other_name')->nullable();
             $table->string('title')->nullable();
             $table->string('hospital')->nullable();
-            $table->string('specialization')->nullable();
+            $table->unsignedInteger('specialization_id');
             $table->string('gender')->nullable();
+            $table->string('address')->nullable();
+            $table->string('bio')->nullable();
+            $table->decimal('latitude', 8, 6)->nullable();
+            $table->decimal('longitude', 9, 6)->nullable();
             $table->tinyInteger('status')->default(1);
             $table->boolean('is_profile_verified')->default(0);
             $table->timestamps();

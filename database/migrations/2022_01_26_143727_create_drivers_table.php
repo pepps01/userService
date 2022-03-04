@@ -31,6 +31,7 @@ class CreateDriversTable extends Migration
             $table->decimal('latitude', 8, 6)->nullable();
             $table->decimal('longitude', 9, 6)->nullable();
             $table->integer('country_id')->nullable();
+            $table->string('gender')->nullable();
             $table->integer('state_id')->nullable();
             $table->boolean('is_profile_verified')->default(0);
             $table->timestamps();

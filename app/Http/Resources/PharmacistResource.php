@@ -6,20 +6,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PharmacistResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+
     public function toArray($request)
     {
         return [
             'pharmacistProfileId' => $this->id,
             'userId' => $this->user_id,
             'status' => $this->is_active,
-            'longitude' => $this->longitude,
+            'gender' => $this->gender,
+            'phone' => $this->phone_number,
+            'address' => $this->address,
             'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'phoneNumber' => $this->phone_number
         ];
     }

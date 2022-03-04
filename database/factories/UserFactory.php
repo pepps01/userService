@@ -19,8 +19,8 @@ class UserFactory extends Factory
             'lastname' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'application_name' => $this->faker->randomElement(['rigour_patient', 'rigour_driver', 'polaris', 'ecommerce', 'picon', 'distributor']),
-            'role_id' => 72,
-            // 'role_id' => $this->faker->randomElement([9, 18, 27, 36, 45, 54, 63, 72, 81]),
+            // 'role_id' => 72,
+            'role_id' => $this->faker->randomElement([9, 18, 27, 36, 45, 54, 63, 72, 81]),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),

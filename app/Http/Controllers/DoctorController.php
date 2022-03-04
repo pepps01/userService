@@ -31,7 +31,7 @@ class DoctorController extends Controller
         $userData = $request->validated();
         if( $getDoctorToUpdate ){
             $getUserRole = $getDoctorToUpdate->role_id;
-            if( $getUserRole == 18 ){
+            if( $getUserRole == 54 ){
                 $updateUser = $this->userRepository->update( $userID,  $userData );
                 $updateProfile = $this->doctorRepository->update( $userID,  $userData );
                 return ApiResponse::successResponseWithData( new UserResource( $updateUser ), 'Profile updated successfully', 200);

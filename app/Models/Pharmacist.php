@@ -21,6 +21,7 @@ class Pharmacist extends Model
         'logo',
         'country_id',
         'state_id',
+        'gender',
     ];
 
     public function user(){

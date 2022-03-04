@@ -6,12 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DoctorResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+
     public function toArray($request)
     {
         return [
@@ -19,7 +14,7 @@ class DoctorResource extends JsonResource
             'userId' => $this->user_id,
             'phoneNumber' => $this->phone_number,
             'photo' => $this->photo,
-            'specialiation' => $this->specialization,
+            'specialization' => new SpecializationResource( $this->specialization ),
             'otherName' => $this->other_name,
             'title' => $this->title,
             'hospital' => $this->hospital,

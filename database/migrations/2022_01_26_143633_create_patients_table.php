@@ -8,7 +8,7 @@ class CreatePatientsTable extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * @return void
      */
     public function up()
@@ -19,6 +19,12 @@ class CreatePatientsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('phone_number')->nullable()->unique();
             $table->string('photo')->nullable();
+            $table->string('address')->nullable();
+            $table->decimal('latitude', 8, 6)->nullable();
+            $table->decimal('longitude', 9, 6)->nullable();
+            $table->integer('country_id')->nullable();
+            $table->integer('state_id')->nullable();
+            $table->string('gender')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });

@@ -13,7 +13,8 @@ class Patient extends Model
         'user_id',
         'phone_number',
         'photo',
-        'status'
+        'status',
+        'gender',
     ];
 
     public function user(){

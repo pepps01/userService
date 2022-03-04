@@ -26,7 +26,8 @@ class Driver extends Model
         'longitude',
         'country_id',
         'state_id',
-        'is_profile_verified'
+        'is_profile_verified',
+        'gender',
     ];
 
     public function user(){

@@ -1,12 +1,12 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\Driver;
+use App\Models\Patient;
 use App\Models\User;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
-class DriverTableSeeder extends Seeder
+class PatientTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +15,10 @@ class DriverTableSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::where('role_id', 45)->get();
+        $users = User::where('role_id', 9)->get();
         $faker = Faker::create();
         foreach( $users as $user ){
-            Driver::insert([
+            Patient::insert([
                 'user_id' => $user->id,
                 'phone_number' => $faker->ean8(),
                 'address' => $faker->address(),

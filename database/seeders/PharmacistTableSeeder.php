@@ -15,7 +15,7 @@ class PharmacistTableSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::whereBetween('id', array(2, 30))->get();
+        $users = User::where('role_id', 72)->get();
         $faker = Faker::create();
         foreach( $users as $user ){
             Pharmacist::insert([
@@ -26,6 +26,7 @@ class PharmacistTableSeeder extends Seeder
                 'latitude' => $faker->latitude($min = -90, $max = 90),
                 'country_id' => $faker->numberBetween(1, 50),
                 'state_id' => $faker->numberBetween(1, 150),
+                'gender' => $faker->randomElement(['Male', 'Female']),
             ]);
         }
     }

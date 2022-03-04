@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Patient;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 class CreateUpdatePatientRequest extends FormRequest
@@ -23,12 +24,16 @@ class CreateUpdatePatientRequest extends FormRequest
      */
     public function rules()
     {
+        $patient = Patient::where('user_id', auth()->user()->id)->first();
         return [
             'firstname' =>  ['required', 'string', 'max:255'],
             'lastname' =>  ['required', 'string', 'max:255'],
             'date_of_birth' => [ 'required', 'date'],
-            'phone_number' => ['required', 'numeric', Rule::unique('patients')->ignore($this->route('id'))],
-            'photo' => ['required', 'image', 'mimes:jpg,png,jpeg', 'max:4048'],
+            'phone_number' => ['required', 'numeric', Rule::unique('patients')->ignore($patient->id)],
+            'photo' => ['image', 'mimes:jpg,png,jpeg', 'max:4048'],
+            'gender' => ['required', 'string', Rule::in(['Male', 'Female'])],
+            'country_id' =>  ['required', 'integer'],
+            'state_id' =>  ['required', 'integer'],
         ];
     }
 }
