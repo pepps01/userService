@@ -16,7 +16,6 @@ class CreateDoctorsTable extends Migration
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->string('phone_number')->nullable()->unique();
             $table->string('photo')->nullable();
             $table->string('other_name')->nullable();

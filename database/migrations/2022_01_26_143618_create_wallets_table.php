@@ -16,7 +16,6 @@ class CreateWalletsTable extends Migration
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->float('balance', 10, 2)->default(0);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();

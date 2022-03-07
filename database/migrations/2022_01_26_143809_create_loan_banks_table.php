@@ -16,7 +16,6 @@ class CreateLoanBanksTable extends Migration
         Schema::create('loan_banks', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->string('phone_number')->nullable()->unique();
             $table->string('loan_bank_name')->nullable();
             $table->string('loan_account_number')->nullable();

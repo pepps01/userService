@@ -16,7 +16,6 @@ class CreateManufacturersTable extends Migration
         Schema::create('manufacturers', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->string('phone_number')->nullable()->unique();
             $table->tinyInteger('status')->default(1);
             $table->boolean('is_profile_verified')->default(0);

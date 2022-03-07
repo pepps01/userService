@@ -16,9 +16,7 @@ class CreateUserBanksTable extends Migration
         Schema::create('user_banks', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedInteger('bank_id');
-            $table->foreign('bank_id')->references('id')->on('banks');
             $table->char('account_name', 100);
             $table->char('account_number', 10);
             $table->tinyInteger('status')->default(1);

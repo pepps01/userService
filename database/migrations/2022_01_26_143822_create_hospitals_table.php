@@ -16,7 +16,6 @@ class CreateHospitalsTable extends Migration
         Schema::create('hospitals', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id'); 
-            $table->foreign('user_id')->references('id')->on('users');
             $table->string('phone_number')->nullable()->unique();
             $table->string('hospital_name')->nullable();
             $table->tinyInteger('status')->default(1);
