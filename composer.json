@@ -13,8 +13,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/socialite": "^5.3",
         "laravel/tinker": "^2.5",
-        "netsells/laravel-geoscope": "^2.0",
-        "nextapps/laravel-verification-code": "^1.1"
+        "netsells/laravel-geoscope": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

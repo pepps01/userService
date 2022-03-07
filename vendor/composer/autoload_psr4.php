@@ -56,7 +56,6 @@ return array(
     'Opis\\Closure\\' => array($vendorDir . '/opis/closure/src'),
     'Nyholm\\Psr7\\' => array($vendorDir . '/nyholm/psr7/src'),
     'NunoMaduro\\Collision\\' => array($vendorDir . '/nunomaduro/collision/src'),
-    'NextApps\\VerificationCode\\' => array($vendorDir . '/nextapps/laravel-verification-code/src'),
     'Netsells\\GeoScope\\Tests\\' => array($vendorDir . '/netsells/laravel-geoscope/tests'),
     'Netsells\\GeoScope\\' => array($vendorDir . '/netsells/laravel-geoscope/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),

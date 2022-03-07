@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VerifyCodeRequest;
-use NextApps\VerificationCode\VerificationCode;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\VerificationCodeNotification;
+use App\Models\VerificationCode;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Traits\ApiResponse;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class VerificationController extends Controller
 {
@@ -82,25 +86,68 @@ class VerificationController extends Controller
         return ApiResponse::successResponse('Verification successful', 200);
     }
 
+    public static function sendVerificationCode( $email )
+    {
+        $code = random_int(1000, 9999);
+        $checkExistingCodes = VerificationCode::where( 'verifiable',  $email )->get();
+
+        if( $checkExistingCodes ){
+
+            foreach( $checkExistingCodes as $existingCodes ){
+                $codes = VerificationCode::find( $existingCodes->id );
+                $codes->delete();
+            }
+
+        }
+
+        $hashedCode = Hash::make( $code );
+        $data = [
+            'code' => $hashedCode,
+            'verifiable' => $email,
+            'expires_at' => Carbon::now()->addMinutes(5)->toDateTimeString()
+        ];
+
+        VerificationCode::create( $data );
+
+        $mail = [
+            'subject' => 'Verify Email Address',
+            'code' => $code,
+        ];
+
+        Notification::route('mail', $email )->notify( (new VerificationCodeNotification( $mail )) );
+    }
+
     public function verifyCode(VerifyCodeRequest $request)
     {
         $data = $request->validated();
-        $verifyUser = VerificationCode::verify($data['code'], $data['email']);
 
-        $checkIfUserExists = User::where('email', $data['email'])->first();
-        
-        if( !$checkIfUserExists ){
-            return ApiResponse::errorResponse('Incorrect email!', 404);
+        $user = User::where('email', $data['email'])->first();
+        $verifyUser = $this::verify($data['code'], $data['email']);
+        $code = VerificationCode::where( 'verifiable', $data['email'] )->first();
+
+        if ( $user->hasVerifiedEmail() ) {
+            return ApiResponse::successResponse('Email already verified', 200);
         }
 
-        if( $verifyUser == false){
-            return ApiResponse::errorResponse('Incorrect code supplied!', 404);
-        } else{
-            $user = User::where('email', $data['email'])->first();
-            $user->email_verified_at = now();
-            $user->save();
-            return ApiResponse::successResponse('Verification successful', 200);
+        if( !$user ){
+            return ApiResponse::errorResponse('Invalid details!', 404);
         }
+
+        if( ! $verifyUser ){
+            return ApiResponse::errorResponse('Invalid code!', 403);
+        }
+
+        if( $code->expires_at < now() ){
+            return ApiResponse::errorResponse('Invalid code!', 403);
+        }
+
+        $user->email_verified_at = now();
+        $user->save();
+
+        $this::delete( $data['email'] );
+
+        return ApiResponse::successResponse('Verification successful', 200);
+
     }
 
     public function resendVerifyCode(Request $request)
@@ -115,17 +162,40 @@ class VerificationController extends Controller
                 return ApiResponse::successResponse('Email already verified', 200);
             }
 
-            VerificationCode::send($request->email);
+            $this::sendVerificationCode( $request->email );
 
             if ($request->wantsJson()) {
                 return ApiResponse::successResponse('Verification code sent', 200);
             }
 
         } else {
-                return ApiResponse::errorResponse('The supplied email does not exist!', 404);
+                return ApiResponse::errorResponse('Invalid details!', 404);
         }
 
 
+    }
+
+    public static function verify( $code, $email ){
+        $getCode = VerificationCode::where( 'verifiable', $email )->first();
+        if( $getCode ){
+            $existingCode = $getCode->code;
+            $correctCode = Hash::check( $code, $existingCode );
+           if( $correctCode ){
+               return true;
+           } else{
+            return false;
+           }
+        } else{
+            return false;
+        }
+    }
+
+    public static function delete( $email )
+    {
+        $code = VerificationCode::where( 'verifiable', $email )->first();
+        if( $code ){
+            $code->delete();
+        }
     }
 
 }
