@@ -4,7 +4,7 @@ namespace Database\Seeders;
 use App\Models\Role;
 
 use Illuminate\Database\Seeder;
-
+use Faker\Factory as Faker;
 class RolesTableSeeder extends Seeder
 {
     /**

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 use App\Models\Specialization;
 
 use Illuminate\Database\Seeder;
-
+use Faker\Factory as Faker;
 class SpecializationTableSeeder extends Seeder
 {
     /**
