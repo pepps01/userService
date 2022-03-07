@@ -5,7 +5,7 @@ use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\ProfileRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\WalletRepositoryInterface;
 use App\Http\Requests\CreateUserRequest;
-use NextApps\VerificationCode\VerificationCode;
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +26,7 @@ class AuthController extends Controller
         $this->userRepository = $userRepository;
         $this->profileRepository = $profileRepository;
         $this->walletRepository = $walletRepository;
+        $this->verificationController = new VerificationController();
     }
 
     /**
@@ -56,7 +57,9 @@ class AuthController extends Controller
 
     public function register(CreateUserRequest $request)
     {
+
         $newUser = $request->validated();
+
         $createUser = $this->userRepository->create($newUser);
         $createUserProfile = $this->profileRepository->create($createUser->id, $createUser->role_id);
         $createWallet = $this->walletRepository->create($createUser->id);
@@ -67,7 +70,7 @@ class AuthController extends Controller
         $webApps = ['polaris', 'ecommerce', 'picon'];
 
         if ( in_array( $newUser['application_name'], $mobileApps ) ){
-            VerificationCode::send( $newUser['email'] );
+            VerificationController::sendVerificationCode( $newUser['email'] );
         }
 
         if ( in_array( $newUser['application_name'], $webApps ) ){

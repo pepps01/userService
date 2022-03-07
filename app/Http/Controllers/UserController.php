@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Resources\UserResource;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
