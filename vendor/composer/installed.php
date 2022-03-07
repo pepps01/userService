@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '1cd46b28cff5e5e2ea72e0508d317445d2391032',
+        'reference' => '8475d442d3d31768d24ecad19fca9d6b2dfb04c1',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -418,7 +418,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '1cd46b28cff5e5e2ea72e0508d317445d2391032',
+            'reference' => '8475d442d3d31768d24ecad19fca9d6b2dfb04c1',
             'dev_requirement' => false,
         ),
         'laravel/passport' => array(
@@ -913,8 +913,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0.0 || 2.0.0 || 3.0.0',
-                1 => '1.0|2.0',
+                0 => '1.0|2.0',
+                1 => '1.0.0 || 2.0.0 || 3.0.0',
             ),
         ),
         'psr/simple-cache' => array(
