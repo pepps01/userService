@@ -87,6 +87,12 @@ class VerificationController extends Controller
         $data = $request->validated();
         $verifyUser = VerificationCode::verify($data['code'], $data['email']);
 
+        $checkIfUserExists = User::where('email', $data['email'])->first();
+        
+        if( !$checkIfUserExists ){
+            return ApiResponse::errorResponse('Incorrect email!', 404);
+        }
+
         if( $verifyUser == false){
             return ApiResponse::errorResponse('Incorrect code supplied!', 404);
         } else{
