@@ -44,7 +44,7 @@ class AuthController extends Controller
         if (Auth::attempt($userData)) {
             $accessToken = Auth::user()->createToken('Auth Token')->accessToken;
             $data = new UserResource(auth()->user());
-
+ 
             return ApiResponse::successResponseWithData($data, 'Login successful', 200, $accessToken);
         }
 

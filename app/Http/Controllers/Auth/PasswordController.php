@@ -5,9 +5,11 @@ use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResetPasswordMobileRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Exception;
@@ -15,10 +17,10 @@ use App\Traits\ApiResponse;
 
 class PasswordController extends Controller
 {
-    public function sendForgotPasswordLink(ForgotPasswordRequest $request)
+    public function sendForgotPasswordLink( $email )
     {
         $token = Str::random(10);
-        $email = $request->input('email');
+
         if (User::where('email', $email)->doesntExist()) {
 
             return ApiResponse::errorResponse('The supplied email does not exist!', 404);
@@ -29,8 +31,9 @@ class PasswordController extends Controller
                 'email' => $email,
                 'token' => $token,
             ]);
-            $user = User::firstWhere('email', $email);
-            $user->sendPasswordResetNotification($token);
+            
+            $user = User::firstWhere( 'email', $email );
+            $user->sendPasswordResetLink();
 
             return ApiResponse::successResponse('Please check your email address for reset password link', 200);
         } catch (Exception  $exception) {
@@ -59,6 +62,19 @@ class PasswordController extends Controller
         $user->save();
 
         return ApiResponse::successResponse('Password update successful', 200);
+    }
+
+    public function resetPasswordMobile(ResetPasswordMobileRequest $request)
+    {
+        $data = $request->validated();
+        $user = User::where('email', $data['email'])->first();
+        if( $user ){
+            $user->password = Hash::make($data['password']);
+            $user->save();
+            return ApiResponse::successResponse('Password reset successful', 200 );
+        } else{
+            return ApiResponse::errorResponse('Incorrect details', 400);
+        }
     }
 
     public function changePassword(ChangePasswordRequest $request)

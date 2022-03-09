@@ -22,8 +22,10 @@ Route::group(['middleware' => ['json.response']], function () {
     // Unauthenticated Routes
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('register', [AuthController::class, 'register'])->name('register');
-    Route::post('forgot-password', [PasswordController::class, 'sendForgotPasswordLink'])->name('password.request');
-    Route::post('reset-password', [PasswordController::class, 'resetPassword'])->name('password.reset');
+    Route::post('reset-password', [VerificationController::class, 'sendResetPasswordCode'])->name('password.code.request');
+    Route::post('verify-password-code', [VerificationController::class, 'verifyPasswordCode'])->name('verify-password-code');
+    Route::post('reset-password-mobile', [PasswordController::class, 'resetPasswordMobile'])->name('password.reset.mobile');
+    // Route::post('reset-password', [PasswordController::class, 'resetPassword'])->name('password.reset');
     Route::post('resend-verification-email', [VerificationController::class, 'resendVerificationEmail'])->name('verification.resend');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verifyEmail'])->name('verification.verify');
     Route::post('verify-code', [VerificationController::class, 'verifyCode'])->name('verify-code');

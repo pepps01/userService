@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ForgotPasswordCodeRequest;
 use App\Http\Requests\VerifyCodeRequest;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\VerificationCodeNotification;
@@ -12,6 +13,8 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 
 class VerificationController extends Controller
@@ -33,6 +36,7 @@ class VerificationController extends Controller
         $this->middleware('auth:api')->only('resend');
         $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
+        $this->passwordController = new PasswordController();
     }
 
     /**
@@ -86,7 +90,58 @@ class VerificationController extends Controller
         return ApiResponse::successResponse('Verification successful', 200);
     }
 
-    public static function sendVerificationCode( $email )
+    public function sendResetPasswordCode( ForgotPasswordCodeRequest $request )
+    {
+        $data = $request->validated();
+        $user = User::where('email', $data['email'])->first();
+        $applicationName = $user->application_name;
+        $mobileApps = ['rigourPatient', 'rigourDriver', 'rigourDistributor'];
+
+        if( $user ){
+
+        if ( in_array( $applicationName, $mobileApps ) ){
+            $this::sendVerificationCode( $data['email'], 'password' );
+        } else{
+            $this->passwordController->sendForgotPasswordLink( $data['email'] );
+        }
+
+            return ApiResponse::successResponse('Password reset code sent', 200);
+        } else{
+            return ApiResponse::errorResponse('Invalid details', 403);
+        }
+
+    }
+
+    public function verifyPasswordCode( VerifyCodeRequest $request )
+    {
+        $data = $request->validated();
+
+        $user = User::where('email', $data['email'])->first();
+        $verifyUser = $this::verify($data['code'], $data['email']);
+        $code = VerificationCode::where( 'verifiable', $data['email'] )->first();
+
+        if( !$user ){
+            return ApiResponse::errorResponse('Invalid details!', 404);
+        }
+
+        if( ! $verifyUser ){
+            return ApiResponse::errorResponse('Invalid code!', 403);
+        }
+
+        if( $code->expires_at < now() ){
+            return ApiResponse::errorResponse('Invalid code!', 403);
+        }
+
+         // $this::delete( $data['email'] );
+
+        $userData = new UserResource( $user );
+
+        return ApiResponse::successResponseWithData( $userData, 'Code verification successful', 200 );
+
+
+    }
+
+    public static function sendVerificationCode( $email, $purpose )
     {
         $code = random_int(1000, 9999);
         $checkExistingCodes = VerificationCode::where( 'verifiable',  $email )->get();
@@ -109,10 +164,21 @@ class VerificationController extends Controller
 
         VerificationCode::create( $data );
 
-        $mail = [
-            'subject' => 'Verify Email Address',
-            'code' => $code,
-        ];
+        if( $purpose == 'verification'){
+            $mail = [
+                'subject' => 'Verify Email Address',
+                'message' => 'Your verification code: :code',
+                'code' => $code,
+            ];
+        }
+
+        if( $purpose == 'password' ){
+            $mail = [
+                'subject' => 'Password Reset Code',
+                'message' => 'Your password reset code: :code',
+                'code' => $code,
+            ];
+        }
 
         Notification::route('mail', $email )->notify( (new VerificationCodeNotification( $mail )) );
     }
@@ -146,7 +212,10 @@ class VerificationController extends Controller
 
         $this::delete( $data['email'] );
 
-        return ApiResponse::successResponse('Verification successful', 200);
+        $userData = new UserResource( $user );
+        $accessToken =   $user->createToken('Auth Token')->accessToken;
+
+        return ApiResponse::successResponseWithData($userData, 'Verification successful', 200, $accessToken);
 
     }
 
@@ -162,7 +231,7 @@ class VerificationController extends Controller
                 return ApiResponse::successResponse('Email already verified', 200);
             }
 
-            $this::sendVerificationCode( $request->email );
+            $this::sendVerificationCode( $request->email, 'verification' );
 
             if ($request->wantsJson()) {
                 return ApiResponse::successResponse('Verification code sent', 200);
