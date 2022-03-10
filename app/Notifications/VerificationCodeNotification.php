@@ -42,9 +42,9 @@ class VerificationCodeNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                     ->subject($this->data['subject'])
+                     ->subject( $this->data['subject'] )
                     ->greeting(__('Hello!'))
-                    ->line(__('Your verification code: :code', ['code' => $this->data['code']]))
+                    ->line(__( $this->data['message'], ['code' => $this->data['code']]))
                     ->line(__('Kind regards'));
     }
 

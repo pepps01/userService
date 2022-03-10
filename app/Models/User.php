@@ -44,12 +44,21 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $appends = [
         'full_name',
-        'role'
+        'role',
+        'is_verified',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getIsVerifiedAttribute(){
+
+        if( ! empty( $this->email_verified_at ) ){
+            return 'verified';
+        }
+        return 'unverified';
+    }
 
     public function getFullNameAttribute(){
         return $this->firstname.' '.$this->lastname;
